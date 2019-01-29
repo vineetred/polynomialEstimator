@@ -4,35 +4,52 @@ import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.model_selection import train_test_split
 
 
-np.random.seed(0)
-x = 2 - 3 * np.random.normal(0, 1, 20)
-y = x - 2 * (x ** 2) + 0.5 * (x ** 3) + np.random.normal(-3, 3, 20)
+#DATA
 fileopen = open('hw1data.txt') 
-x,y = np.loadtxt(fileopen,usecols=(0,1), unpack=True)
+X_train,y_train = np.loadtxt(fileopen,usecols=(0,1), unpack=True)
+# X_train, X_test, y_train, y_test = train_test_split(x,y,test_size = 0.25)
 
 
 # transforming the data to include another axis
-x = x[:, np.newaxis]
+# X_test,X_train = X_test,X_train[:, np.newaxis]
+X_train = X_train[:, np.newaxis]
 # x.reshape(,51)
 # x = x.reshape(1,-1)
-y = y[:, np.newaxis]
+y_train = y_train[:, np.newaxis]
 # y = y.reshape(1,-1)
-
+rmse_arr = []
 model = LinearRegression()
-polynomial_features = PolynomialFeatures(degree=1)
-x_poly = polynomial_features.fit_transform(x)
+def poly(deg):
+    polynomial_features = PolynomialFeatures(degree=deg)
+    x_poly = polynomial_features.fit_transform(X_train)
 
-model.fit(x_poly, y)
+    model.fit(x_poly, y_train)
 
 
+    y_pred = model.predict(x_poly)
 
-y_pred = model.predict(x_poly)
+    rmse = np.sqrt(mean_squared_error(y_train,y_pred))
+    rmse_arr.append(rmse)
 
-rmse = np.sqrt(mean_squared_error(y,y_pred))
+    print(rmse)
+    plt.scatter(X_train, y_train, s=10)
+    plt.plot(X_train, y_pred, color='r')
+    plt.show()
 
-print(rmse)
-plt.scatter(x, y, s=10)
-plt.plot(x, y_pred, color='r')
+many = input("Enter the polynomial degrees").split(" ")
+newrmse = []
+for i in many:
+    newrmse.append(int(i))
+    poly(int(i))
+
+#PLOTTING MSE on TRAINING
+print (rmse_arr)
+# plt.scatter(rmse_arr,many)
+plt.plot(many,rmse_arr)
+plt.xlabel('Degree of polynomial')
+plt.ylabel('MSE')
+# plt.xlim(0.5,0)
 plt.show()
