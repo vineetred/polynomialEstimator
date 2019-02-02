@@ -35,6 +35,7 @@ variance_test = []
 sum_test = X_test*0
 sum_train = X_train*0
 
+
 model = LinearRegression()
 def poly_train(deg):
     polynomial_features = PolynomialFeatures(degree=deg)
@@ -72,6 +73,7 @@ def poly_test(deg):
     sum_test = y_testpred + sum_test
 
 many = input("Enter the polynomial degrees - ").split(" ")
+size = len(many) #EDIT THIS FOR THE NUMBER OF ESTIMATORS YOU ARE CREATING
 newrmse = []
 for i in many:
     newrmse.append(int(i))
@@ -97,7 +99,7 @@ plt.title("Testing")
 plt.legend()
 plt.show()
 #PLOTTING THE AVERAGES 1(E) - TRAINING
-sum_train = sum_train/4
+sum_train = sum_train/size
 plt.scatter(X_train, y_train, s=10)
 rmse_comp = np.sqrt(mean_squared_error(y_train,sum_train))
 plt.plot(X_train, sum_train, color='r')
@@ -105,7 +107,7 @@ plt.title("Composite polynomial - TRAINING")
 plt.xlabel("RMSE = "+ str(rmse_comp))
 plt.show()
 #PLOTTING THE AVERAGES 1(E) - TESTING
-sum_test = sum_test/4
+sum_test = sum_test/size
 plt.scatter(X_test, y_test, s=10)
 rmse_comp_test = np.sqrt(mean_squared_error(y_test,sum_test))
 plt.plot(X_test, sum_test, color='r')
