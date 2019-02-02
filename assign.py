@@ -12,14 +12,28 @@ fileopen = open('hw1data.txt')
 x,y = np.loadtxt(fileopen,usecols=(0,1), unpack=True)
 X_train, X_test, y_train, y_test = train_test_split(x,y,test_size = 0.25)
 
+zipXTrain = zip(X_train,y_train)
+x_list = list(zipXTrain)
+x_list.sort()
+X_train, y_train = zip(*x_list)
 
+X_train = np.asarray(X_train)
+X_train = np.reshape(X_train,(-1,1))
+y_train = np.asarray(y_train)
+y_train = np.reshape(y_train,(-1,1))
+
+
+# X_train = x
+# y_train = y
+# X_test = x
+# y_test = y
 # transforming the data to include another axis
 # X_test,X_train = X_test,X_train[:, np.newaxis]
-X_train = X_train[:, np.newaxis]
+# X_train = X_train[:, np.newaxis]
 X_test = X_test[:, np.newaxis]
 # x.reshape(,51)
 # x = x.reshape(1,-1)
-y_train = y_train[:, np.newaxis]
+# y_train = y_train[:, np.newaxis]
 y_test = y_test[:, np.newaxis]
 # y = y.reshape(1,-1)
 rmse_arr = []
