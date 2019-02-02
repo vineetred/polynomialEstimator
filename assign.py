@@ -11,7 +11,7 @@ from sklearn.model_selection import train_test_split
 fileopen = open('hw1data.txt') 
 x,y = np.loadtxt(fileopen,usecols=(0,1), unpack=True)
 #DIVIDING THE DATA INTO TRAINING AND TESTING
-X_train, X_test, y_train, y_test = train_test_split(x,y,test_size = 0.25)
+X_train, X_test, y_train, y_test = train_test_split(x,y,test_size = 0.15)
 
 #THIS FIXES A BUG THE MESSES UP THE ORDER OF POINTS AFTER SPLIT - TRAINING
 zipXTrain = zip(X_train,y_train)
@@ -37,6 +37,7 @@ y_test = np.reshape(y_test,(-1,1))
 
 
 rmse_arr = []
+rmse_test = []
 model = LinearRegression()
 def poly_train(deg):
     polynomial_features = PolynomialFeatures(degree=deg)
@@ -61,12 +62,13 @@ def poly_test(deg):
     polynomial_features = PolynomialFeatures(degree=deg)
     x_test = polynomial_features.fit_transform(X_test)
     y_testpred = model.predict(x_test)
-    rmse_test = np.sqrt(mean_squared_error(y_test,y_testpred))
-    print(rmse_test)
+    rmse_1 = np.sqrt(mean_squared_error(y_test,y_testpred))
+    rmse_test.append(rmse_1)
+    print(rmse_1)
     plt.title("Testing - The degree is "+str(deg))
     plt.scatter(X_test, y_test, s=10)
     plt.plot(X_test, y_testpred, color='r')
-    plt.xlabel("RMSE = " + str(rmse_test))
+    plt.xlabel("RMSE = " + str(rmse_1))
     plt.show()
 
 many = input("Enter the polynomial degrees - ").split(" ")
@@ -78,9 +80,15 @@ for i in many:
 
 #PLOTTING MSE on TRAINING
 print (rmse_arr)
-# plt.scatter(rmse_arr,many)
 plt.plot(many,rmse_arr)
 plt.xlabel('Degree of polynomial')
-plt.ylabel('MSE')
-# plt.xlim(0.5,0)
+plt.ylabel('RMSE')
+plt.title("Training")
+plt.show()
+#PLOTTING MSE on TESTING
+print (rmse_test)
+plt.plot(many,rmse_test)
+plt.xlabel('Degree of polynomial')
+plt.ylabel('RMSE')
+plt.title("Testing")
 plt.show()
