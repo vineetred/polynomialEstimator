@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
-from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.metrics import mean_squared_error, r2_score,explained_variance_score
 from sklearn.model_selection import train_test_split
 
 
@@ -11,7 +11,7 @@ from sklearn.model_selection import train_test_split
 fileopen = open('hw1data.txt') 
 x,y = np.loadtxt(fileopen,usecols=(0,1), unpack=True)
 #DIVIDING THE DATA INTO TRAINING AND TESTING
-X_train, X_test, y_train, y_test = train_test_split(x,y,test_size = 0.15)
+X_train, X_test, y_train, y_test = train_test_split(x,y,test_size = 0.25)
 
 #THIS FIXES A BUG THE MESSES UP THE ORDER OF POINTS AFTER SPLIT - TRAINING
 zipXTrain = zip(X_train,y_train)
@@ -38,6 +38,7 @@ y_test = np.reshape(y_test,(-1,1))
 
 rmse_arr = []
 rmse_test = []
+variance = []
 model = LinearRegression()
 def poly_train(deg):
     polynomial_features = PolynomialFeatures(degree=deg)
@@ -50,6 +51,8 @@ def poly_train(deg):
 
     rmse = np.sqrt(mean_squared_error(y_train,y_pred))
     rmse_arr.append(rmse)
+    test_variance = (explained_variance_score(y_train,y_pred))
+    variance.append(test_variance)
 
     print(rmse)
     plt.scatter(X_train, y_train, s=10)
@@ -80,10 +83,12 @@ for i in many:
 
 #PLOTTING MSE on TRAINING
 print (rmse_arr)
-plt.plot(many,rmse_arr)
+plt.plot(many,rmse_arr,label="RMSE")
+plt.plot(many,variance,label="Variance")
 plt.xlabel('Degree of polynomial')
-plt.ylabel('RMSE')
+plt.ylabel('RMSE and Variance')
 plt.title("Training")
+plt.legend()
 plt.show()
 #PLOTTING MSE on TESTING
 print (rmse_test)
