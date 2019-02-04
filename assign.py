@@ -37,14 +37,15 @@ bias_test = []
 sum_test = X_test*0
 sum_train = X_train*0
 
-
 model = LinearRegression()
+
 def poly_train(deg):
     polynomial_features = PolynomialFeatures(degree=deg)
     x_poly = polynomial_features.fit_transform(X_train)
     model.fit(x_poly, y_train)
     y_pred = model.predict(x_poly)
-    rmse = np.sqrt(mean_squared_error(y_train,y_pred))
+    # rmse = np.sqrt(mean_squared_error(y_train,y_pred))
+    rmse = mean_squared_error(y_train,y_pred)
     rmse_arr.append(rmse)
     mean_data = np.mean(y_train)
     print("Mean_data " + str(mean_data))
@@ -63,21 +64,19 @@ def poly_train(deg):
     global sum_train
     sum_train = y_pred + sum_train
 
-    
-
-
 def poly_test(deg):
     polynomial_features = PolynomialFeatures(degree=deg)
     x_test = polynomial_features.fit_transform(X_test)
     y_testpred = model.predict(x_test)
-    rmse_1 = np.sqrt(mean_squared_error(y_test,y_testpred))
+    # rmse_1 = np.sqrt(mean_squared_error(y_test,y_testpred))
+    rmse_1 = mean_squared_error(y_test,y_testpred)
     rmse_test.append(rmse_1)
     print(rmse_1)
     test_variance = np.var(y_testpred)
     variance_test.append(test_variance)
-    mean_data = np.mean(y_test)
-    mean_pred_train = np.mean(y_testpred)
-    test_bias = (mean_data - mean_pred_train)**2
+    mean_data_test = np.mean(y_test)
+    mean_pred_test = np.mean(y_testpred)
+    test_bias = (mean_data_test - mean_pred_test)**2
     bias_test.append(test_bias)
     plt.title("Testing - The degree is "+str(deg))
     plt.scatter(X_test, y_test, s=10)
