@@ -10,7 +10,7 @@ import statistics
 fileopen = open('hw1data.txt') 
 x,y = np.loadtxt(fileopen,usecols=(0,1), unpack=True)
 #DIVIDING THE DATA INTO TRAINING AND TESTING
-X_train, X_test, y_train, y_test = train_test_split(x,y,test_size = 0.10, shuffle = True)
+X_train, X_test, y_train, y_test = train_test_split(x,y,test_size = 0.25, shuffle = True)
 
 def bugFix(X1,Y1):
     zipXTrain = zip(X1,Y1)
