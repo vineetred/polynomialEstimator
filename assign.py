@@ -62,8 +62,7 @@ def poly_train(deg):
     global sum_train
     sum_train = y_pred + sum_train
 
-def poly_test(deg):
-    polynomial_features = PolynomialFeatures(degree=deg)
+    #TESTING
     x_test = polynomial_features.fit_transform(X_test)
     y_testpred = model.predict(x_test)
     MSE_1 = mean_squared_error(y_test,y_testpred)
@@ -87,32 +86,40 @@ def poly_test(deg):
 
 many = input("Enter the polynomial degrees - ").split(" ")
 size = len(many) #EDIT THIS FOR THE NUMBER OF ESTIMATORS YOU ARE CREATING
-newMSE = []
 for i in many:
-    newMSE.append(int(i))
     poly_train(int(i))
-    poly_test(int(i))
-
-#PLOTTING MSE on TRAINING
+print(many)
+#PLOTTING MSE on TRAINING and TESTING
 print (MSE_arr)
 plt.plot(many,MSE_arr,label="MSE", color = "red")
+plt.xlabel('Degree of polynomial')
+plt.ylabel('MSE')
+plt.title("Training - MSE")
+plt.legend()
+plt.show()
 plt.plot(many,variance,label="Variance", color = "blue")
 plt.plot(many,bias,label = "Bias", color = "green")
 plt.xlabel('Degree of polynomial')
-plt.ylabel('MSE, Variance and Bias')
-plt.title("Training")
+plt.ylabel('Bias and Variance')
+plt.title("Training - Bias and Variance")
 plt.legend()
 plt.show()
-#PLOTTING MSE on TESTING
-print (MSE_test)
-plt.plot(many,MSE_test,label="MSE", color = "red")
+
+
+plt.plot(many,MSE_test, label = "MSE Test", color = "red")
+plt.title("Testing - MSE")
+plt.xlabel('Degree of polynomial')
+plt.ylabel('MSE')
+plt.legend()
+plt.show()
 plt.plot(many,variance_test,label="Variance",color = "blue")
 plt.plot(many,bias_test,label = "Bias",color = "green")
+plt.title("Testing - Bias and Variance")
 plt.xlabel('Degree of polynomial')
-plt.ylabel('MSE, Variance and Bias')
-plt.title("Testing")
+plt.ylabel('Bias and Variance')
 plt.legend()
 plt.show()
+
 #PLOTTING THE AVERAGES 1(E) - TRAINING
 sum_train = sum_train/size
 plt.scatter(X_train, y_train, s=10)
