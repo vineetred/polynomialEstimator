@@ -58,3 +58,6 @@ def bugFix(X1,Y1):
 # X_test = np.reshape(X_test,(-1,1))
 # y_test = np.asarray(y_test)
 # y_test = np.reshape(y_test,(-1,1))
+data_mean = np.mean(Y_train)
+
+bias_train = np.mean(y_pred)

@@ -31,7 +31,9 @@ X_test, y_test = bugFix(X_test,y_test)
 rmse_arr = []
 rmse_test = []
 variance = []
+bias = []
 variance_test = []
+bias_test = []
 sum_test = X_test*0
 sum_train = X_train*0
 
@@ -44,7 +46,13 @@ def poly_train(deg):
     y_pred = model.predict(x_poly)
     rmse = np.sqrt(mean_squared_error(y_train,y_pred))
     rmse_arr.append(rmse)
-    train_variance = (explained_variance_score(y_train,y_pred))
+    mean_data = np.mean(y_train)
+    print("Mean_data " + str(mean_data))
+    mean_pred_train = np.mean(y_pred)
+    print("Mean_pred data " + str(mean_pred_train))
+    train_variance = np.var(y_pred)
+    train_bias = (mean_data - mean_pred_train)**2
+    bias.append(train_bias)
     variance.append(train_variance)
     print(rmse)
     plt.scatter(X_train, y_train, s=10)
@@ -55,6 +63,9 @@ def poly_train(deg):
     global sum_train
     sum_train = y_pred + sum_train
 
+    
+
+
 def poly_test(deg):
     polynomial_features = PolynomialFeatures(degree=deg)
     x_test = polynomial_features.fit_transform(X_test)
@@ -62,8 +73,12 @@ def poly_test(deg):
     rmse_1 = np.sqrt(mean_squared_error(y_test,y_testpred))
     rmse_test.append(rmse_1)
     print(rmse_1)
-    test_variance = (explained_variance_score(y_test,y_testpred))
+    test_variance = np.var(y_testpred)
     variance_test.append(test_variance)
+    mean_data = np.mean(y_test)
+    mean_pred_train = np.mean(y_testpred)
+    test_bias = (mean_data - mean_pred_train)**2
+    bias_test.append(test_bias)
     plt.title("Testing - The degree is "+str(deg))
     plt.scatter(X_test, y_test, s=10)
     plt.plot(X_test, y_testpred, color='r')
@@ -82,8 +97,9 @@ for i in many:
 
 #PLOTTING MSE on TRAINING
 print (rmse_arr)
-plt.plot(many,rmse_arr,label="RMSE")
-plt.plot(many,variance,label="Variance")
+plt.plot(many,rmse_arr,label="RMSE", color = "red")
+plt.plot(many,variance,label="Variance", color = "blue")
+plt.plot(many,bias,label = "Bias", color = "green")
 plt.xlabel('Degree of polynomial')
 plt.ylabel('RMSE and Variance')
 plt.title("Training")
@@ -91,10 +107,11 @@ plt.legend()
 plt.show()
 #PLOTTING MSE on TESTING
 print (rmse_test)
-plt.plot(many,rmse_test,label="RMSE")
-plt.plot(many,variance_test,label="Variance")
+plt.plot(many,rmse_test,label="RMSE", color = "red")
+plt.plot(many,variance_test,label="Variance",color = "blue")
+plt.plot(many,bias_test,label = "Bias",color = "green")
 plt.xlabel('Degree of polynomial')
-plt.ylabel('RMSE')
+plt.ylabel('RMSE, Variance and Bias')
 plt.title("Testing")
 plt.legend()
 plt.show()
