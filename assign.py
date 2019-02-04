@@ -4,12 +4,13 @@ from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.metrics import mean_squared_error, r2_score,explained_variance_score
 from sklearn.model_selection import train_test_split
+import statistics
 
 #DATA UNPACKING
 fileopen = open('hw1data.txt') 
 x,y = np.loadtxt(fileopen,usecols=(0,1), unpack=True)
 #DIVIDING THE DATA INTO TRAINING AND TESTING
-X_train, X_test, y_train, y_test = train_test_split(x,y,test_size = 0.25)
+X_train, X_test, y_train, y_test = train_test_split(x,y,test_size = 0.10, shuffle = True)
 
 def bugFix(X1,Y1):
     zipXTrain = zip(X1,Y1)
@@ -28,8 +29,8 @@ X_train, y_train = bugFix(X_train,y_train)
 #THIS FIXES A BUG THE MESSES UP THE ORDER OF POINTS AFTER SPLIT - TESTING
 X_test, y_test = bugFix(X_test,y_test)
 
-rmse_arr = []
-rmse_test = []
+MSE_arr = []
+MSE_test = []
 variance = []
 bias = []
 variance_test = []
@@ -44,22 +45,19 @@ def poly_train(deg):
     x_poly = polynomial_features.fit_transform(X_train)
     model.fit(x_poly, y_train)
     y_pred = model.predict(x_poly)
-    # rmse = np.sqrt(mean_squared_error(y_train,y_pred))
-    rmse = mean_squared_error(y_train,y_pred)
-    rmse_arr.append(rmse)
+    MSE = mean_squared_error(y_pred,y_train)
+    MSE_arr.append(MSE)
     mean_data = np.mean(y_train)
-    print("Mean_data " + str(mean_data))
     mean_pred_train = np.mean(y_pred)
-    print("Mean_pred data " + str(mean_pred_train))
     train_variance = np.var(y_pred)
     train_bias = (mean_data - mean_pred_train)**2
     bias.append(train_bias)
     variance.append(train_variance)
-    print(rmse)
+    print(MSE)
     plt.scatter(X_train, y_train, s=10)
     plt.plot(X_train, y_pred, color='r')
     plt.title("Training - The degree is "+str(deg))
-    plt.xlabel("RMSE = "+str(rmse))
+    plt.xlabel("MSE = "+str(MSE))
     plt.show()
     global sum_train
     sum_train = y_pred + sum_train
@@ -68,65 +66,66 @@ def poly_test(deg):
     polynomial_features = PolynomialFeatures(degree=deg)
     x_test = polynomial_features.fit_transform(X_test)
     y_testpred = model.predict(x_test)
-    # rmse_1 = np.sqrt(mean_squared_error(y_test,y_testpred))
-    rmse_1 = mean_squared_error(y_test,y_testpred)
-    rmse_test.append(rmse_1)
-    print(rmse_1)
+    MSE_1 = mean_squared_error(y_test,y_testpred)
+    MSE_test.append(MSE_1)
+    print(MSE_1)
     test_variance = np.var(y_testpred)
     variance_test.append(test_variance)
     mean_data_test = np.mean(y_test)
     mean_pred_test = np.mean(y_testpred)
     test_bias = (mean_data_test - mean_pred_test)**2
+    print("test bias")
+    print(test_bias)
     bias_test.append(test_bias)
     plt.title("Testing - The degree is "+str(deg))
     plt.scatter(X_test, y_test, s=10)
     plt.plot(X_test, y_testpred, color='r')
-    plt.xlabel("RMSE = " + str(rmse_1))
+    plt.xlabel("MSE = " + str(MSE_1))
     plt.show()
     global sum_test
     sum_test = y_testpred + sum_test
 
 many = input("Enter the polynomial degrees - ").split(" ")
 size = len(many) #EDIT THIS FOR THE NUMBER OF ESTIMATORS YOU ARE CREATING
-newrmse = []
+newMSE = []
 for i in many:
-    newrmse.append(int(i))
+    newMSE.append(int(i))
     poly_train(int(i))
     poly_test(int(i))
 
 #PLOTTING MSE on TRAINING
-print (rmse_arr)
-plt.plot(many,rmse_arr,label="RMSE", color = "red")
+print (MSE_arr)
+plt.plot(many,MSE_arr,label="MSE", color = "red")
 plt.plot(many,variance,label="Variance", color = "blue")
 plt.plot(many,bias,label = "Bias", color = "green")
 plt.xlabel('Degree of polynomial')
-plt.ylabel('RMSE and Variance')
+plt.ylabel('MSE, Variance and Bias')
 plt.title("Training")
 plt.legend()
 plt.show()
 #PLOTTING MSE on TESTING
-print (rmse_test)
-plt.plot(many,rmse_test,label="RMSE", color = "red")
+print (MSE_test)
+plt.plot(many,MSE_test,label="MSE", color = "red")
 plt.plot(many,variance_test,label="Variance",color = "blue")
 plt.plot(many,bias_test,label = "Bias",color = "green")
 plt.xlabel('Degree of polynomial')
-plt.ylabel('RMSE, Variance and Bias')
+plt.ylabel('MSE, Variance and Bias')
 plt.title("Testing")
 plt.legend()
 plt.show()
 #PLOTTING THE AVERAGES 1(E) - TRAINING
 sum_train = sum_train/size
 plt.scatter(X_train, y_train, s=10)
-rmse_comp = np.sqrt(mean_squared_error(y_train,sum_train))
+MSE_comp = np.sqrt(mean_squared_error(y_train,sum_train))
 plt.plot(X_train, sum_train, color='r')
 plt.title("Composite polynomial - TRAINING")
-plt.xlabel("RMSE = "+ str(rmse_comp))
+plt.xlabel("MSE = "+ str(MSE_comp))
 plt.show()
 #PLOTTING THE AVERAGES 1(E) - TESTING
 sum_test = sum_test/size
 plt.scatter(X_test, y_test, s=10)
-rmse_comp_test = np.sqrt(mean_squared_error(y_test,sum_test))
+MSE_comp_test = np.sqrt(mean_squared_error(y_test,sum_test))
 plt.plot(X_test, sum_test, color='r')
 plt.title("Composite polynomial - TESTING")
-plt.xlabel("RMSE = "+ str(rmse_comp_test))
+plt.xlabel("MSE = "+ str(MSE_comp_test))
 plt.show()
